@@ -192,7 +192,7 @@ if [ -d "/usr/local/crashplan" ]; then
   logme "CrashPlan found in /usr/local/crashplan. Downloading and running uninstaller."
 
   # Download the uninstaller
-  wget https://raw.githubusercontent.com/AdrianBudimir/detr/refs/heads/main/uninstallcp.sh -O uninstallcp.sh
+  wget https://raw.githubusercontent.com/AdrianBudimir/divptx/refs/heads/main/uninstallcp.sh -O uninstallcp.sh
   if [ $? -eq 0 ]; then
     logme "CrashPlan uninstaller downloaded successfully."
     # Make the script executable
