@@ -294,4 +294,23 @@ else
     rm -f "$NINJA_DEB_FILE"
 fi
 
+# --- UNINSTALL NETSKOPE ---
+logme "Script started. Checking for Netskope agent."
+
+NETSKOPE_UNINSTALLER="/opt/netskope/stagent/uninstall.sh"
+
+if [ -f "$NETSKOPE_UNINSTALLER" ]; then
+    logme "Netskope uninstaller found. Attempting to uninstall..."
+    sudo "$NETSKOPE_UNINSTALLER"
+    
+    if [ $? -eq 0 ]; then
+        logme "Netskope agent uninstalled successfully."
+    else
+        logme "Error: Failed to uninstall Netskope agent. Manual intervention may be required."
+        # Do not exit here, as other uninstalls might still be necessary.
+    fi
+else
+    logme "Netskope uninstaller not found. No action needed."
+fi
+
 exit 0
