@@ -240,14 +240,58 @@ else
   logme "helpdesk_local user not found. Skipping user deletion."
 fi
 
-# Nija's place some time soon
-# Install JumpCloud
-#logme "Installing JumpCloud..."
-#curl --tlsv1.2 --silent --show-error --header 'x-connect-key: 54038b4423e41d5b9641ce4eaec83c837e775e99' https://kickstart.jumpcloud.com/Kickstart | sudo bash
-#if [ $? -eq 0 ]; then
-#  logme "JumpCloud installed successfully."
-#else
-#  logme "JumpCloud installation failed."
-#fi
+# --- INSTALL NINJAONE AGENT ---
+logme "Starting NinjaOne Agent installation section."
+
+# Define the download URL and local filename
+NINJA_URL="https://eu.ninjarmm.com/agent/installer/38a449ca-cc25-4451-8a10-04e2969ed927/10.0.4634/NinjaOne-Agent-InternalInfrastructure-MainOffice-LINUXLAPTOP-x86-64.deb"
+NINJA_DEB_FILE="/tmp/ninjaone-agent.deb"
+
+# Check if the .deb file already exists and remove it to prevent issues
+if [ -f "$NINJA_DEB_FILE" ]; then
+    logme "Existing NinjaOne agent file found. Removing it: $NINJA_DEB_FILE"
+    rm -f "$NINJA_DEB_FILE"
+fi
+
+# Download the .deb file
+logme "Downloading NinjaOne agent from $NINJA_URL"
+if curl -o "$NINJA_DEB_FILE" -L "$NINJA_URL"; then
+    logme "NinjaOne agent downloaded successfully."
+else
+    logme "Error: Failed to download NinjaOne agent."
+    exit 1 # Exit the script if the download fails
+fi
+
+# Install the .deb file using dpkg
+logme "Installing the NinjaOne agent..."
+if sudo dpkg -i "$NINJA_DEB_FILE"; then
+    logme "NinjaOne agent installed successfully with dpkg."
+    
+    # Run apt install -f to fix any missing dependencies
+    logme "Attempting to fix any missing dependencies..."
+    if sudo apt install -f -y; then
+        logme "Dependencies resolved successfully."
+    else
+        logme "Warning: Failed to resolve dependencies. Manual intervention may be required."
+    fi
+
+    # Clean up the downloaded file
+    logme "Cleaning up downloaded file: $NINJA_DEB_FILE"
+    rm -f "$NINJA_DEB_FILE"
+
+else
+    logme "Error: Failed to install NinjaOne agent with dpkg."
+    # The `apt install -f` command is still useful here as it might fix the install
+    logme "Attempting to fix installation and resolve dependencies..."
+    if sudo apt install -f -y; then
+        logme "Installation and dependencies fixed successfully."
+    else
+        logme "Error: Failed to fix installation. Manual intervention may be required."
+        exit 1 # Exit if installation and dependency fixing fails
+    fi
+    
+    # Clean up the downloaded file on failure as well
+    rm -f "$NINJA_DEB_FILE"
+fi
 
 exit 0
