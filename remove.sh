@@ -89,20 +89,29 @@ logme "Vendor: $VENDOR"
 logme "Serial Number: $SERIAL"
 
 # Uninstall Crowdstrike
-logme "Uninstalling CrowdStrike..."
+#logme "Uninstalling CrowdStrike..."
 
-# Try purge first for a more complete removal
-sudo apt-get purge -y falcon-sensor
-if [ $? -eq 0 ]; then
-  logme "CrowdStrike uninstalled successfully with apt-get purge."
+# Set the maintenance token as a variable
+MAINTENANCE_TOKEN="voh7Phai1oowa6ahquae4naheiJo0aeyiemaeNgace"
+
+# Log the script start
+logme "Script started. Checking for CrowdStrike sensor."
+
+# Check if the CrowdStrike sensor is installed
+if [ -f "/opt/CrowdStrike/falconctl" ]; then
+    logme "CrowdStrike sensor found. Attempting to uninstall..."
+    
+    # Execute the uninstallation command with the maintenance token
+    sudo /opt/CrowdStrike/falconctl -r --maintenance-token="$MAINTENANCE_TOKEN"
+    
+    # Check the exit code of the last command
+    if [ $? -eq 0 ]; then
+        logme "CrowdStrike sensor uninstalled successfully."
+    else
+        logme "Error: Failed to uninstall CrowdStrike sensor. Check the token and permissions."
+    fi
 else
-  logme "CrowdStrike uninstallation with apt-get purge failed. Trying apt remove..."
-  sudo apt remove -y falcon-sensor
-  if [ $? -eq 0 ]; then
-    logme "CrowdStrike uninstalled successfully with apt remove."
-  else
-    logme "CrowdStrike uninstallation failed with both apt-get purge and apt remove."
-  fi
+    logme "CrowdStrike sensor not found. No action needed."
 fi
 
 # Deregister FortiClient
