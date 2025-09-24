@@ -88,31 +88,36 @@ logme "Hostname: $HOSTNAME"
 logme "Vendor: $VENDOR"
 logme "Serial Number: $SERIAL"
 
-# Uninstall Crowdstrike
-#logme "Uninstalling CrowdStrike..."
-
-# Set the maintenance token as a variable
+# Set the maintenance token and email as variables
 MAINTENANCE_TOKEN="voh7Phai1oowa6ahquae4naheiJo0aeyiemaeNgace"
+EMAIL_ADDRESS="crowdstrike-ptx-trimble@trimble.com"
 
-# Log the script start
-logme "Script started. Checking for CrowdStrike sensor."
+# Define the URL and local path for the uninstaller script
+UNINSTALLER_URL="https://cis-infosec.trimble.com/crowdstrike/force-removal-of-crowdstrike-for-linux.sh"
+UNINSTALLER_PATH="/tmp/force-removal-of-crowdstrike-for-linux.sh"
 
-# Check if the CrowdStrike sensor is installed
-if [ -f "/opt/CrowdStrike/falconctl" ]; then
-    logme "CrowdStrike sensor found. Attempting to uninstall..."
-    
-    # Execute the uninstallation command with the maintenance token
-    sudo /opt/CrowdStrike/falconctl -r --maintenance-token="$MAINTENANCE_TOKEN"
-    
-    # Check the exit code of the last command
-    if [ $? -eq 0 ]; then
-        logme "CrowdStrike sensor uninstalled successfully."
-    else
-        logme "Error: Failed to uninstall CrowdStrike sensor. Check the token and permissions."
-    fi
-else
-    logme "CrowdStrike sensor not found. No action needed."
+# Download the uninstaller script
+logme "Downloading CrowdStrike uninstaller from $UNINSTALLER_URL"
+if ! curl -sSL -o "$UNINSTALLER_PATH" "$UNINSTALLER_URL"; then
+    logme "Error: Failed to download CrowdStrike uninstaller. Exiting."
+    exit 1
 fi
+
+# Make the uninstaller script executable
+logme "Making the CrowdStrike uninstaller script executable."
+chmod +x "$UNINSTALLER_PATH"
+
+# Run the uninstaller with the specified arguments
+logme "Attempting to uninstall CrowdStrike using the downloaded script."
+if sudo "$UNINSTALLER_PATH" --email "$EMAIL_ADDRESS" --token "$MAINTENANCE_TOKEN"; then
+    logme "CrowdStrike uninstalled successfully using the force removal script."
+else
+    logme "Error: Failed to uninstall CrowdStrike. Manual intervention may be required."
+fi
+
+# Clean up the downloaded script
+logme "Cleaning up the downloaded CrowdStrike uninstaller."
+rm -f "$UNINSTALLER_PATH"
 
 # Deregister FortiClient
 if command -v /opt/forticlient/epctrl &> /dev/null; then
