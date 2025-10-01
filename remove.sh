@@ -119,40 +119,40 @@ fi
 logme "Cleaning up the downloaded CrowdStrike uninstaller."
 rm -f "$UNINSTALLER_PATH"
 
-# Deregister FortiClient
-if command -v /opt/forticlient/epctrl &> /dev/null; then
-  sudo /opt/forticlient/epctrl -u
-  logme "FortiClient deregistered."
-
-  # Purge FortiClient
-  if command -v apt-get &> /dev/null; then
-    sudo apt-get purge -y forticlient*
-    if [ $? -eq 0 ]; then
-      logme "FortiClient purged."
-      # Delete FortiClient repo file
-      for file in /etc/apt/sources.list.d/repo.forticlien*; do
-        if [ -f "$file" ]; then
-          sudo rm "$file"
-          if [ $? -eq 0 ]; then
-            logme "FortiClient repo file deleted."
-          else
-            logme "Failed to delete FortiClient repo file."
-          fi
-        else
-          logme "FortiClient repo file $file not found."
-        fi
-      done
-
-    else
-      logme "Failed to purge FortiClient."
-    fi
-  else
-    logme "apt-get not found. Skipping purge."
-  fi
-
-else
-  logme "FortiClient not found. Skipping deregistration and purge."
-fi
+## Deregister FortiClient
+#if command -v /opt/forticlient/epctrl &> /dev/null; then
+#  sudo /opt/forticlient/epctrl -u
+#  logme "FortiClient deregistered."
+#
+#  # Purge FortiClient
+#  if command -v apt-get &> /dev/null; then
+#    sudo apt-get purge -y forticlient*
+#    if [ $? -eq 0 ]; then
+#      logme "FortiClient purged."
+#      # Delete FortiClient repo file
+#      for file in /etc/apt/sources.list.d/repo.forticlien*; do
+#        if [ -f "$file" ]; then
+#          sudo rm "$file"
+#          if [ $? -eq 0 ]; then
+#            logme "FortiClient repo file deleted."
+#          else
+#            logme "Failed to delete FortiClient repo file."
+#         fi
+#        else
+#          logme "FortiClient repo file $file not found."
+#        fi
+#      done
+#
+#    else
+#      logme "Failed to purge FortiClient."
+#    fi
+#  else
+#    logme "apt-get not found. Skipping purge."
+#  fi
+#
+#else
+#  logme "FortiClient not found. Skipping deregistration and purge."
+#fi
 
 # Remove Bitdefender GravityZone
 if [ -f "/opt/bitdefender-security-tools/bin/uninstall" ]; then
