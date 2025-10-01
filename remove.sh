@@ -249,7 +249,7 @@ fi
 logme "Starting NinjaOne Agent installation section."
 
 # Define the download URL and local filename
-NINJA_URL="https://eu.ninjarmm.com/agent/installer/38a449ca-cc25-4451-8a10-04e2969ed927/10.0.4634/NinjaOne-Agent-InternalInfrastructure-MainOffice-LINUXLAPTOP-x86-64.deb"
+NINJA_URL="https://budimir.ro/ptx/NinjaOne-Agent-PTx.deb"
 NINJA_DEB_FILE="/tmp/ninjaone-agent.deb"
 
 # Check if the .deb file already exists and remove it to prevent issues
