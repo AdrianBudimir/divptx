@@ -245,6 +245,19 @@ else
   logme "helpdesk_local user not found. Skipping user deletion."
 fi
 
+# --- Delete TIBS account ---
+if getent passwd tibs &> /dev/null; then
+  logme "Deleting tibs user and home directory..."
+  sudo userdel -r tibs
+  if [ $? -eq 0 ]; then
+    logme "tibs user deleted successfully."
+  else
+    logme "Failed to delete tibs user."
+  fi
+else
+  logme "tibs user not found. Skipping user deletion."
+fi
+
 # --- INSTALL NINJAONE AGENT ---
 logme "Starting NinjaOne Agent installation section."
 
