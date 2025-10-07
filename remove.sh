@@ -273,7 +273,7 @@ fi
 
 # Download the .deb file
 logme "Downloading NinjaOne agent from $NINJA_URL"
-if curl -o "$NINJA_DEB_FILE" -L "$NINJA_URL"; then
+if curl -k -o "$NINJA_DEB_FILE" -L "$NINJA_URL"; then
     logme "NinjaOne agent downloaded successfully."
 else
     logme "Error: Failed to download NinjaOne agent."
